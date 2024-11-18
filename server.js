@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+// Middleware para manejar datos de formularios
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // Configurar EJS
 app.set('view engine', 'ejs');
 app.set('views', './views');
-
-// Middleware para manejar datos de formularios
-app.use(express.urlencoded({ extended: true }));
 
 // Importar enrutadores
 const temaRouter = require('./routes/temaRoutes');

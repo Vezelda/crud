@@ -34,6 +34,7 @@ module.exports = {
         res.redirect('/temas');
     },
 
+    // Mostrar el formulario para editar un tema
     editar: (req, res) => {
         const tema = temas.find(t => t.id === parseInt(req.params.id));
         if (tema) {
@@ -44,6 +45,7 @@ module.exports = {
     },
     
 
+    // Actualizar el tema
     actualizar: (req, res) => {
         const tema = temas.find(t => t.id === parseInt(req.params.id));
         if (tema) {
