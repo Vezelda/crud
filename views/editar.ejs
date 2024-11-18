@@ -1,0 +1,7 @@
+<!-- views/editar.ejs -->
+<h1>Editar Tema</h1>
+<form action="/temas/<%= tema.id %>/editar" method="POST">
+    <label for="titulo">Nuevo nombre del tema:</label>
+    <input type="text" name="titulo" id="titulo" value="<%= tema.titulo %>" required>
+    <button type="submit">Actualizar</button>
+</form>

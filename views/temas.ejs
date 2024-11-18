@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temas</title>
+</head>
+<body>
+    <h1>Listas de Temas</h1>
+    <form action="/temas" method="POST">
+        <input type="text" name="titulo" placeholder="Nuevo Tema" required>
+        <button type="submit"> Crear Tema</button>
+    </form>
+    <ul id="temas-container">
+        <% temas.forEach (tema => { %>
+            <li>
+                <%= tema.titulo %> - Votos: <%= tema.votos %>
+                <form action="/temas/<%= tema.id %>/votar" method="POST" style="display:inline;">
+                    <button type="submit">Votar</button>
+                </form>
+                <form action="/temas/<%= tema.id %>/eliminar" method="POST" style="display:inline;">
+                    <button type="submit">Eliminar</button>
+                </form>
+                <a href="/temas/<%= tema.id %>/editar">Editar</a> <!-- Enlace para editar -->
+            </li>
+       <% }); %>
+    </ul>
+    <script>
+        //selecciona todos los botones de votar
+        document.querySelectorAll('vote-button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault(); // Evita el comportamiento por defecto
+                const temaId = button.dataset.id; // Obten el ID del tema desde el boton
+                
+                // Envia la solicitud POST al servidor
+                const response = await fetch('/temas/${temaId}/votar', {method: 'POST'});
+                if (response.ok) {
+                    const updateData = await response.json(); // Obten la respuesta con los datos actualizados
+                    updateUI(updatedData); // Actualiza la interfaz del usuario
+                } else {
+                    alert('Error al votar, intente de nuevo');
+                }
+            });
+        });
+
+        // funcion para actualizar la interfaz del usuario
+        function updateUI(data) {
+            const temasContainer = document.querySelector('#temas-container');
+            temasContainer.innerHTML = ''; // Limpia listas de temas
+            
+            // Itera sobre los temas actualizados y genera el nuevo HTML
+            data.forEach( tema => {
+                const temaElement= document.createElement('li');
+                temaElement.innerHTML = `
+                ${tema.titulo} - Votos: ${tema.votos}
+                <form action="/temas/${tema.id}/votar" method="POST" style="display:inline;">
+                    <button type="button" class="vote-button" data-id="${tema.id}">Votar</button>
+                </form>
+                <form action="/temas/${tema.id}/eliminar" method="POST" style="display:inline;">
+                    <button type="submit">Eliminar</button>
+                </form>
+            `;
+            temasContainer.appendChild(temaElement);
+            });
+            attachEventListeners(); // reasigna los eventos a los nuevos botones
+        }
+
+        // Reasigna los eventos de click a los nuevos botones
+
+        function attachEventListeners() {
+            document.querySelectorAll('.vote-button').forEach(button => {
+                button.addEventListener('click', async (event) =>{
+                    event.preventDefault();
+                    const temaId = button.dataset.id;
+                    const response = await fetch(`/temas/${temaId}/votar`, { method: 'POST'});
+                    if (response.ok) {
+                        const updateData = await response.json();
+                        updateUI(updatedData);
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
